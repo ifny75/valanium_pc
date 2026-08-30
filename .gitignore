@@ -1,0 +1,12 @@
+node_modules/
+target/
+dist/
+.env
+*.log
+
+# Tauri: сгенерированные шаблоны платформ и артефакты сборки.
+src-tauri/gen/
+
+# Ключ подписи релизов. Живёт в ~/.obsidian-release/, здесь его быть не может.
+*.key
+signing.key
