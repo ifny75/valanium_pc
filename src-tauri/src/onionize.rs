@@ -78,8 +78,6 @@ pub fn onionize_status() -> serde_json::Value {
     serde_json::json!({ "installed": installed, "running": running, "socks": port })
 }
 
-/// Скачивает и проверяет. Манифест и подпись проверяются до этого вызова тем же
-/// `verify_release`, что и обновления, — здесь проверяется уже сам файл.
 /// Можно ли вообще идти по этому адресу за таким объёмом.
 ///
 /// Отдельной функцией ради проверяемости: это защита, и она обязана иметь
@@ -109,6 +107,8 @@ fn verify_body(body: &[u8], sha256: &str, bytes: u64) -> Result<(), String> {
     Ok(())
 }
 
+/// Скачивает и проверяет. Манифест и подпись проверяются до этого вызова тем же
+/// `verify_release`, что и обновления, — здесь проверяется уже сам файл.
 #[tauri::command]
 pub fn onionize_install(url: String, sha256: String, bytes: u64) -> Result<(), String> {
     accept(&url, bytes)?;
