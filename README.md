@@ -1,6 +1,6 @@
-# obsidian-windows
+# valanium-windows
 
-Windows-клиент: WebView2 для интерфейса, [obsidian-core](../obsidian-core) для всего остального.
+Windows-клиент: WebView2 для интерфейса, [valanium-core](../valanium-core) для всего остального.
 
 Ядро линкуется напрямую как обычная Rust-зависимость — FFI здесь не нужен, обе стороны на Rust. Словарь команд и событий при этом тот же, что пойдёт в Android через JNI, поэтому возможности добавляются в ядре, а не здесь.
 
@@ -21,19 +21,19 @@ npm run build
 
 ## Как проверить переписку на одной машине
 
-Поговорить с самим собой нельзя: MLS не добавляет в группу того, кто её создал. Значит нужны две копии с **разными базами** — путь задаётся переменной `OBSIDIAN_DB`:
+Поговорить с самим собой нельзя: MLS не добавляет в группу того, кто её создал. Значит нужны две копии с **разными базами** — путь задаётся переменной `VALANIUM_DB`:
 
 ```powershell
 # первое окно
-$env:OBSIDIAN_DB = "$env:TEMP\obsidian-a.db"; .\obsidian-windows.exe
+$env:VALANIUM_DB = "$env:TEMP\valanium-a.db"; .\valanium-windows.exe
 
 # второе окно (новая консоль)
-$env:OBSIDIAN_DB = "$env:TEMP\obsidian-b.db"; .\obsidian-windows.exe
+$env:VALANIUM_DB = "$env:TEMP\valanium-b.db"; .\valanium-windows.exe
 ```
 
 Дальше: каждая копия открывает свою базу своим паролем, регистрируется своим инвайтом, копирует свой адрес устройства из шапки и вставляет чужой в поле «Адрес устройства собеседника».
 
-Без переменной база лежит в `%APPDATA%\app.obsidian.messenger\obsidian.db`.
+Без переменной база лежит в `%APPDATA%\app.valanium.messenger\valanium.db`.
 
 В настройках подключения доступны Auto, Basic, Multi-hop и Onion. Auto
 перебирает маршруты Basic → Multi-hop → Onion. Onion-режим
@@ -63,10 +63,10 @@ await invoke("unlock", { password });     // открыть локальную �
 await invoke("submit", { json });         // команда в ядро
 await invoke("is_unlocked");              // база уже открыта?
 
-listen("obsidian:event", ({ payload }) => { /* событие ядра, JSON */ });
+listen("valanium:event", ({ payload }) => { /* событие ядра, JSON */ });
 ```
 
-`submit` принимает те же команды, что описаны в [obsidian-core/README.md](../obsidian-core/README.md): `status`, `conversations`, `connect`, `register`, `send`, `history`, `fingerprint`, `verify`, `disconnect`. Новая кнопка — это новая команда в ядре, а не новый Rust-код в `main.rs`.
+`submit` принимает те же команды, что описаны в [valanium-core/README.md](../valanium-core/README.md): `status`, `conversations`, `connect`, `register`, `send`, `history`, `fingerprint`, `verify`, `disconnect`. Новая кнопка — это новая команда в ядре, а не новый Rust-код в `main.rs`.
 
 ## Если правишь интерфейс
 
@@ -91,17 +91,23 @@ listen("obsidian:event", ({ payload }) => { /* событие ядра, JSON */ 
 
 ## Где остальное
 
-Obsidian разложен на четыре репозитория:
+Valanium разложен на репозитории:
 
 | Репозиторий | Что там | Лицензия |
 |---|---|---|
-| [obsidian](https://github.com/ifny75/obsidian) | ядро: криптография, MLS, протокол | AGPL-3.0 |
-| [obsidian_server](https://github.com/ifny75/obsidian_server) | сервер и конфиги узлов | AGPL-3.0 |
-| [obsidian_android](https://github.com/ifny75/obsidian_android) | клиент для Android | PolyForm Noncommercial 1.0.0 |
-| [obsidian_pc](https://github.com/ifny75/obsidian_pc) | клиент для Windows | PolyForm Noncommercial 1.0.0 |
+| [valanium_main](https://github.com/ifny75/valanium_main) | ядро: криптография, MLS, протокол | AGPL-3.0 |
+| [valanium_server](https://github.com/ifny75/valanium_server) | сервер и конфиги узлов | AGPL-3.0 |
+| [valanium_android](https://github.com/ifny75/valanium_android) | клиент для Android | PolyForm Noncommercial 1.0.0 |
+| [valanium_pc](https://github.com/ifny75/valanium_pc) | клиент для Windows | PolyForm Noncommercial 1.0.0 |
+| [valanium-onionize](https://github.com/valanium-project/valanium-onionize) | встроенный Tor для Onion | AGPL-3.0 |
+
+Ядро подключено git-зависимостью с жёстко закреплённой ревизией: клиент обязан
+собираться тем же ядром, которым его собрали и подписали.
 
 ## Лицензия
 
-**PolyForm Noncommercial 1.0.0**, см. [LICENSE.md](LICENSE.md). Код открыт для чтения, проверки и личного использования. Коммерческое использование требует отдельной договорённости.
+**PolyForm Noncommercial 1.0.0**, см. [LICENSE.md](LICENSE.md). Код открыт для
+чтения, проверки и личного использования. Коммерческое использование требует
+отдельной договорённости.
 
-Имя «Obsidian» лицензией не покрывается — см. [TRADEMARK.md](TRADEMARK.md).
+Имя «Valanium» лицензией не покрывается — см. [TRADEMARK.md](TRADEMARK.md).

@@ -2868,50 +2868,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "obsidian-core"
-version = "0.1.0"
-source = "git+https://github.com/ifny75/obsidian?rev=27f83c47495230e064a34faba758c9f65323d4fe#27f83c47495230e064a34faba758c9f65323d4fe"
-dependencies = [
- "argon2",
- "bip39",
- "chacha20poly1305",
- "ed25519-dalek",
- "futures-util",
- "hex",
- "openmls",
- "openmls_basic_credential",
- "openmls_memory_storage",
- "openmls_rust_crypto",
- "openmls_traits",
- "rand_core 0.6.4",
- "rusqlite",
- "rustls",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.20",
- "tls_codec",
- "tokio",
- "tokio-socks",
- "tokio-tungstenite",
- "zeroize",
-]
-
-[[package]]
-name = "obsidian-windows"
-version = "0.11.0"
-dependencies = [
- "hex",
- "obsidian-core",
- "rand_core 0.6.4",
- "serde_json",
- "tauri",
- "tauri-build",
- "webview2-com",
- "windows",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3687,6 +3643,7 @@ version = "0.23.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0283386ce02abc0151e1761d08802dfe86c173b0b494af5cbc086574e453da06"
 dependencies = [
+ "log",
  "once_cell",
  "ring",
  "rustls-pki-types",
@@ -5043,6 +5000,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
+name = "ureq"
+version = "2.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02d1a66277ed75f640d608235660df48c8e3c19f3b4edb6a263315626cc3c01d"
+dependencies = [
+ "base64 0.22.1",
+ "log",
+ "once_cell",
+ "rustls",
+ "rustls-pki-types",
+ "url",
+ "webpki-roots 0.26.11",
+]
+
+[[package]]
 name = "url"
 version = "2.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5089,6 +5061,52 @@ dependencies = [
  "js-sys",
  "serde_core",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "valanium-core"
+version = "0.1.0"
+source = "git+https://github.com/ifny75/valanium_main?rev=a557f8b8b06e74da17faa4aaadcc3971d7e6939c#a557f8b8b06e74da17faa4aaadcc3971d7e6939c"
+dependencies = [
+ "argon2",
+ "bip39",
+ "chacha20poly1305",
+ "ed25519-dalek",
+ "futures-util",
+ "hex",
+ "openmls",
+ "openmls_basic_credential",
+ "openmls_memory_storage",
+ "openmls_rust_crypto",
+ "openmls_traits",
+ "rand_core 0.6.4",
+ "rusqlite",
+ "rustls",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.20",
+ "tls_codec",
+ "tokio",
+ "tokio-socks",
+ "tokio-tungstenite",
+ "zeroize",
+]
+
+[[package]]
+name = "valanium-windows"
+version = "0.11.0"
+dependencies = [
+ "hex",
+ "rand_core 0.6.4",
+ "serde_json",
+ "sha2",
+ "tauri",
+ "tauri-build",
+ "ureq",
+ "valanium-core",
+ "webview2-com",
+ "windows",
 ]
 
 [[package]]

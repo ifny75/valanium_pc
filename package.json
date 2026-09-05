@@ -1,11 +1,11 @@
 {
-  "name": "obsidian-windows",
+  "name": "valanium-windows",
   "private": true,
-  "description": "Windows-клиент Obsidian: WebView2 поверх obsidian-core",
+  "description": "Windows-клиент Valanium: WebView2 поверх valanium-core",
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build --no-bundle",
-    "icon": "tauri icon ../resource/obsidian_logo.svg"
+    "icon": "tauri icon ../resource/valanium_logo.svg"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"

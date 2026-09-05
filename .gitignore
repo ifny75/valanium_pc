@@ -1,5 +1,6 @@
 node_modules/
 target/
+target-*/
 dist/
 .env
 *.log
@@ -7,6 +8,10 @@ dist/
 # Tauri: сгенерированные шаблоны платформ и артефакты сборки.
 src-tauri/gen/
 
-# Ключ подписи релизов. Живёт в ~/.obsidian-release/, здесь его быть не может.
+# Собранные релизы: артефакт, а не исходник.
+build-release-*/
+release/
+
+# Ключ подписи релизов. Живёт в ~/.valanium-release/, здесь его быть не может.
 *.key
 signing.key

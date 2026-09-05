@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <title>Obsidian</title>
+    <title>Valanium</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -16,8 +16,8 @@
       рамки их тоже нет.
     -->
     <div class="titlebar" data-tauri-drag-region>
-      <img class="titlebar-logo" src="assets/obsidian_logo.svg" alt="" data-tauri-drag-region />
-      <span id="window-title" class="titlebar-title" data-tauri-drag-region>Obsidian</span>
+      <img class="titlebar-logo" src="assets/valanium_lock_logo.svg" alt="" data-tauri-drag-region />
+      <span id="window-title" class="titlebar-title" data-tauri-drag-region>Valanium</span>
       <div class="titlebar-actions">
         <button id="window-minimize" class="window-button" type="button" aria-label="Свернуть">
           <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8" /></svg>
@@ -32,8 +32,8 @@
     </div>
     <section id="screen-boot" class="screen centered-screen">
       <div class="boot-card">
-        <div class="large-logo"><img src="assets/obsidian_logo.svg" alt="" /></div>
-        <h1>Obsidian</h1>
+        <div class="large-logo"><img src="assets/valanium_lock_logo.svg" alt="" /></div>
+        <h1>Valanium</h1>
         <p id="boot-status">Защищаем локальное хранилище…</p>
         <span class="loader" aria-hidden="true"></span>
       </div>
@@ -41,7 +41,7 @@
 
     <section id="screen-locked" class="screen centered-screen hidden">
       <div class="entry-card">
-        <div class="large-logo"><img src="assets/obsidian_logo.svg" alt="" /></div>
+        <div class="large-logo"><img src="assets/valanium_lock_logo.svg" alt="" /></div>
         <p class="eyebrow">Пароль при запуске</p>
         <h1>Переписка закрыта</h1>
         <p class="lead">Ключ базы зашифрован этим паролем. Он нигде не хранится, поэтому подобрать его не у кого — и восстановить тоже: забыли пароль, останется только завести базу заново.</p>
@@ -56,7 +56,7 @@
 
     <section id="screen-migrate" class="screen centered-screen hidden">
       <div class="entry-card">
-        <div class="large-logo"><img src="assets/obsidian_logo.svg" alt="" /></div>
+        <div class="large-logo"><img src="assets/valanium_lock_logo.svg" alt="" /></div>
         <p class="eyebrow">Однократное обновление</p>
         <h1>Защитить существующую базу</h1>
         <p class="lead">Введите прежний пароль один раз. Windows зашифрует его через DPAPI, и следующие входы станут автоматическими.</p>
@@ -157,10 +157,10 @@
 
     <section id="screen-language" class="screen onboarding-screen language-screen hidden">
       <div id="onboarding-landing" class="landing-scroll">
-        <section class="landing-hero" aria-label="Obsidian public beta">
+        <section class="landing-hero" aria-label="Valanium public beta">
           <div class="language-brand">
-            <img src="assets/obsidian_logo.svg" alt="" />
-            <strong>Obsidian</strong>
+            <img src="assets/valanium_lock_logo.svg" alt="" />
+            <strong>Valanium</strong>
             <span>public beta</span>
           </div>
           <div class="language-choice" aria-label="Choose language">
@@ -171,16 +171,16 @@
 
         <section id="landing-about" class="landing-about">
           <div class="landing-copy">
-            <h1 id="intro-title">obsidian</h1>
+            <h1 id="intro-title">valanium</h1>
             <div id="intro-text" class="intro-story">
-              <p data-intro-part="0">Obsidian is a private messenger with reliable end-to-end encryption.</p>
+              <p data-intro-part="0">Valanium is a private messenger with reliable end-to-end encryption.</p>
               <p data-intro-part="1">Messages are encrypted on your device. Relay, Multihop and Tor keep the main server out of sight.</p>
               <p data-intro-part="2">Privacy by design. Open source. No phone number required.</p>
             </div>
-            <div class="intro-links"><a href="https://github.com/ifny75/obsidian" target="_blank" rel="noreferrer noopener">Github</a><i>/</i><a href="https://getobsidian.xyz" target="_blank" rel="noreferrer noopener">Website</a><i>/</i><span>onion website</span></div>
+            <div class="intro-links"><a href="https://github.com/ifny75/valanium" target="_blank" rel="noreferrer noopener">Github</a><i>/</i><a href="https://valanium.com" target="_blank" rel="noreferrer noopener">Website</a><i>/</i><span>onion website</span></div>
           </div>
-          <div class="phone-stage" aria-label="Obsidian on a phone">
-            <img class="phone-mokker" src="assets/onboarding/mokker.png" alt="Интерфейс Obsidian на смартфоне" />
+          <div class="phone-stage" aria-label="Valanium on a phone">
+            <img class="phone-mokker" src="assets/onboarding/mokker.png" alt="Интерфейс Valanium на смартфоне" />
           </div>
           <div id="intro-next" class="onboarding-slider landing-start" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Начать">
             <i class="onboarding-slider-fill"></i><span id="intro-next-label">Проведите, чтобы начать</span><b class="onboarding-slider-thumb">→</b>
@@ -191,8 +191,8 @@
 
     <section id="screen-route" class="screen onboarding-screen onboarding-grid hidden">
       <div class="onboarding-copy route-copy">
-        <div class="onboarding-brand"><img src="assets/obsidian_logo.svg" alt="" /><b>Obsidian</b><span>public beta</span></div>
-        <h1 id="route-title">Obsidian server</h1>
+        <div class="onboarding-brand"><img src="assets/valanium_lock_logo.svg" alt="" /><b>Valanium</b><span>public beta</span></div>
+        <h1 id="route-title">Valanium server</h1>
         <p id="route-text">Выберите, как приложение будет соединяться с сетью. Настройку всегда можно изменить позже.</p>
         <div class="route-list">
           <button class="route-option active" type="button" data-transport="auto"><img src="assets/onboarding/route-relay.png" alt="" /><i class="route-flow"><b></b><b></b><b></b></i><span><b id="route-relay-title">Relay (automatic)</b><small id="route-relay-text">Быстрое прямое соединение</small></span><u>✓</u></button>
@@ -207,8 +207,8 @@
 
     <section id="screen-entry" class="screen onboarding-screen onboarding-grid hidden">
       <div class="onboarding-copy account-copy">
-        <div class="onboarding-brand"><img src="assets/obsidian_logo.svg" alt="" /><b>Obsidian</b><span>public beta</span></div>
-        <h1 id="entry-title">Начните с Obsidian</h1>
+        <div class="onboarding-brand"><img src="assets/valanium_lock_logo.svg" alt="" /><b>Valanium</b><span>public beta</span></div>
+        <h1 id="entry-title">Начните с Valanium</h1>
         <p id="entry-lead">Имя увидят собеседники. Пароль нужен для запасного входа с другого устройства.</p>
         <form id="form-entry" class="onboarding-form" autocomplete="off">
           <label for="handle" id="handle-label">Имя пользователя</label>
@@ -227,7 +227,7 @@
 
     <section id="screen-recover" class="screen onboarding-screen onboarding-grid hidden">
       <div class="onboarding-copy recovery-copy">
-        <div class="onboarding-brand"><img src="assets/obsidian_logo.svg" alt="" /><b>Obsidian</b><span>public beta</span></div>
+        <div class="onboarding-brand"><img src="assets/valanium_lock_logo.svg" alt="" /><b>Valanium</b><span>public beta</span></div>
         <h1 id="recover-title">Recovery phrase</h1>
         <p id="recover-lead">Введите 24 слова в том же порядке. За один шаг показываются восемь слов.</p>
         <div class="setting-segment recovery-segment" id="recover-segment">
@@ -256,8 +256,8 @@
         <div class="sidebar-top">
           <div class="brand-row">
             <div class="brand">
-              <div class="brand-logo"><img src="assets/obsidian_logo.svg" alt="" /></div>
-              <div class="brand-copy"><strong>Obsidian</strong><span>public beta</span></div>
+              <div class="brand-logo"><img src="assets/valanium_lock_logo.svg" alt="" /></div>
+              <div class="brand-copy"><strong>Valanium</strong><span>public beta</span></div>
             </div>
             <div class="brand-actions">
               <button id="new-group" class="icon-button" type="button" title="Новая группа или канал" aria-label="Новая группа или канал"><span class="ui-icon icon-plus"></span></button>
@@ -308,7 +308,7 @@
             <button id="leave-group" class="ghost-button hidden" type="button">Забыть</button>
             <button id="open-search" class="ghost-button" type="button" title="Искать в переписке"><span class="ui-icon icon-search"></span></button>
             <button id="verify" class="ghost-button" type="button" disabled><span class="ui-icon icon-fingerprint"></span><span>Сверить</span></button>
-            <button class="ghost-button call-button" type="button" disabled title="Звонки появятся позже" aria-label="Позвонить"><span class="ui-icon icon-phone"></span></button>
+            <button id="call-button" class="ghost-button call-button" type="button" title="Звонки появятся позже" aria-label="Позвонить"><span class="ui-icon icon-phone"></span></button>
           </div>
         </header>
 
@@ -400,6 +400,10 @@
 
       <div class="settings-body">
         <nav class="settings-nav" id="settings-nav" aria-label="Разделы настроек">
+          <div class="settings-nav-head" aria-hidden="true">
+            <span class="settings-nav-logo"><img src="assets/valanium_lock_logo.svg" alt="" /></span>
+            <span><small>Valanium</small><b>Настройки</b></span>
+          </div>
           <button type="button" data-section="profile" class="active">Мой профиль</button>
           <button type="button" data-section="privacy">Приватность</button>
           <button type="button" data-section="transport">Подключение</button>
@@ -478,6 +482,13 @@
             </div>
             <p id="recovery-status" class="recovery-status"></p>
           </div>
+          <div class="setting-block">
+            <b>Другие устройства</b>
+            <small>Отключает все остальные устройства и навсегда блокирует их старые ключи. Этот компьютер останется подключён.</small>
+            <div class="setting-actions">
+              <button id="revoke-other-devices" class="ghost-button" type="button">Отключить другие</button>
+            </div>
+          </div>
 </section>
           <section class="settings-card logout-card">
             <div class="setting-row">
@@ -526,7 +537,7 @@
             <h1>Подключение</h1>
             <p class="settings-sub">Клиент никогда не обращается к main напрямую. Нажмите на схему, чтобы сменить маршрут текущего соединения.</p>
             <p class="warning-strip">До main ваш адрес не доходит ни одним маршрутом: входной узел заменяет его жетоном, из которого IP не восстановить. Разница между маршрутами в другом — сколько узлов и кто ещё видит адрес по дороге. Cloudflare видит его на Relay и Multi-hop; не видит никто только на Onion.</p>
-            <div class="routing-options" id="transport-segment" role="radiogroup" aria-label="Маршрут Obsidian">
+            <div class="routing-options" id="transport-segment" role="radiogroup" aria-label="Маршрут Valanium">
               <button class="routing-option" data-transport="auto" type="button" role="radio" aria-checked="false">
                 <span class="routing-head"><span><b>Auto</b><small>Доступный маршрут автоматически</small></span><span class="route-help"><span class="route-info" aria-hidden="true">!</span><span class="route-tip" role="tooltip">Пробует по порядку: Relay, Multi-hop, затем Onion — и остаётся на том, который открылся. Перебор возобновится, только если путь перестанет работать: например, вход заблокировали.</span></span><i class="routing-radio"></i></span>
                 <span class="routing-diagram">
@@ -569,10 +580,44 @@
                 </span>
               </button>
             </div>
+
+            <div class="settings-card hop-picker" id="hop-picker">
+              <div class="setting-block">
+                <b>Второй узел Multi-hop</b>
+                <small>Какой узел говорит с main. Первый выбирает Cloudflare — он ближайший, и заменить его нечем. Имена те же, что на странице состояния сети.</small>
+                <div class="setting-segment hop-segment" id="hop-segment" role="radiogroup" aria-label="Второй узел">
+                  <button data-hop="auto" type="button" role="radio" aria-checked="false">Авто</button>
+                  <button data-hop="alpha" type="button" role="radio" aria-checked="false">Alpha</button>
+                  <button data-hop="beta" type="button" role="radio" aria-checked="false">Beta</button>
+                  <button data-hop="gamma" type="button" role="radio" aria-checked="false">Gamma</button>
+                </div>
+                <p class="hop-note">Выбранный узел постоянен, а «Авто» меняет его сам. Постоянный путь заметнее: первый узел видит, что вы всегда уходите через один и тот же второй. Это выбор в пользу предсказуемости, а не анонимности.</p>
+              </div>
+            </div>
+
+            <!--
+              Встроенный Tor. Скачивается отдельным файлом и проверяется дважды:
+              подпись манифеста тем же офлайновым ключом, что и у обновлений, и
+              хеш самого файла. Первая говорит, какой файл правильный, вторая —
+              что приехал именно он.
+            -->
+            <div class="settings-card routing-note" id="onionize-card">
+              <div class="setting-block">
+                <b>Tor внутри приложения</b>
+                <small id="onionize-note">Чтобы Onion работал без Tor Browser и Orbot, нужен небольшой отдельный файл. Он подписан тем же ключом, что и обновления, и проверяется до запуска.</small>
+                <div class="setting-actions">
+                  <button id="onionize-install" class="ghost-button" type="button">Установить</button>
+                  <button id="onionize-start" class="ghost-button hidden" type="button">Включить</button>
+                  <button id="onionize-stop" class="ghost-button hidden" type="button">Выключить</button>
+                </div>
+                <p class="hop-note" id="onionize-hint">Первый запуск строит цепь Tor примерно минуту — это нормально и происходит один раз. Дальше около десяти секунд.</p>
+              </div>
+            </div>
+
             <div class="settings-card routing-note">
               <div class="setting-block">
-                <b>Onion требует локальный Tor</b>
-                <small>Запустите Tor Browser или Tor с SOCKS5 на 127.0.0.1:9050. Auto сначала пробует Relay и Multi-hop, затем Onion; DNS-запрос .onion передаётся внутрь Tor.</small>
+                <b>Свой Tor тоже подходит</b>
+                <small>Если встроенный не нужен или нужны мосты, запустите Tor Browser либо Tor с SOCKS5 на 127.0.0.1:9050 — Onion будет ходить через него. DNS-запрос .onion передаётся внутрь Tor и системному резолверу не достаётся.</small>
               </div>
             </div>
           </section>
@@ -662,7 +707,7 @@
               <div class="setting-block"><b>Цвет карточки</b><small>Фон и цветовой акцент уведомления</small><div class="notification-colors" id="notification-colors"><button type="button" data-notification-color="graphite" aria-label="Графит"></button><button type="button" data-notification-color="violet" aria-label="Фиолетовый"></button><button type="button" data-notification-color="blue" aria-label="Синий"></button><button type="button" data-notification-color="green" aria-label="Зелёный"></button></div></div>
               <div class="setting-block"><b>Положение</b><div class="setting-segment setting-segment-2" id="notification-position"><button type="button" data-notification-position="top">Сверху</button><button type="button" data-notification-position="bottom">Снизу</button></div></div>
               <div class="setting-row"><span><b>Звук уведомления</b><small>Используется notifiations2.mp3</small></span><button id="notification-sound-toggle" class="setting-toggle" type="button" role="switch"><i></i></button></div>
-              <div class="setting-row"><span><b>Запускать вместе с Windows</b><small>Окно при этом не открывается — Obsidian ждёт в трее и принимает сообщения. Закрытие крестиком тоже прячет окно, а не выходит: выйти можно из меню значка.</small></span><button id="autostart-toggle" class="setting-toggle" type="button" role="switch"><i></i></button></div>
+              <div class="setting-row"><span><b>Запускать вместе с Windows</b><small>Окно при этом не открывается — Valanium ждёт в трее и принимает сообщения. Закрытие крестиком тоже прячет окно, а не выходит: выйти можно из меню значка.</small></span><button id="autostart-toggle" class="setting-toggle" type="button" role="switch"><i></i></button></div>
             </div>
           </section>
 
@@ -688,6 +733,17 @@
             </div>
             <p id="admin-status" class="recovery-status"></p>
           </div>
+          <div class="setting-block">
+            <b>Поддержка <span id="support-badge" class="support-badge hidden"></span></b>
+            <small>Письма на support@valanium.com. Здесь их видно; отвечают из своего почтового ящика, куда приходит копия. Лежат они в отдельной базе, не в базе мессенджера: адрес человека и текст письма рядом с личностями хранить нельзя.</small>
+            <div id="support-threads" class="support-threads"></div>
+            <div class="setting-actions">
+              <button id="support-refresh" class="ghost-button" type="button">Обновить</button>
+              <button id="support-prev" class="ghost-button" type="button">Назад</button>
+              <button id="support-next" class="ghost-button" type="button">Дальше</button>
+            </div>
+            <p id="support-status" class="recovery-status"></p>
+          </div>
         </section>
             <div class="settings-card">
               <div class="setting-block">
@@ -708,11 +764,11 @@
             <div class="settings-card">
               <div class="setting-block">
                 <b>Версия приложения</b>
-                <small>Obsidian сам проверяет свежую Public Beta. Установка запускается только после вашего нажатия. Список версий подписан ключом, которого на сервере нет: неподтверждённое обновление окно не предложит.</small>
+                <small>Valanium сам проверяет свежую Public Beta. Установка запускается только после вашего нажатия. Список версий подписан ключом, которого на сервере нет: неподтверждённое обновление окно не предложит.</small>
                 <p id="update-status" class="storage-report">Проверяем обновления…</p>
                 <div class="setting-actions">
                   <button id="update-check" class="ghost-button" type="button">Проверить обновления</button>
-                  <button id="update-download" class="ghost-button hidden" type="button" data-url="https://getobsidian.xyz/downloads/Obsidian-Setup.exe">Скачать новую версию</button>
+                  <button id="update-download" class="ghost-button hidden" type="button" data-url="https://valanium.com/downloads/Valanium-Setup.exe">Скачать новую версию</button>
                   <button id="update-verify" class="ghost-button hidden" type="button">Сверить скачанный файл</button>
                 </div>
                 <p id="update-hash" class="storage-report"></p>
@@ -755,7 +811,7 @@
                   <input id="import-password" type="password" placeholder="Пароль файла переноса" autocomplete="off" />
                   <button id="import-account" class="ghost-button" type="button">Открыть файл переноса</button>
                 </div>
-                <input id="import-file" type="file" accept=".obsidian,text/plain" class="hidden" />
+                <input id="import-file" type="file" accept=".valanium,text/plain" class="hidden" />
               </div>
               <div class="setting-block">
                 <b>Переписки на этом устройстве</b>

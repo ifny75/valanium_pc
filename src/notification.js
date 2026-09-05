@@ -51,7 +51,7 @@ function paint(payload) {
   card.style.setProperty("--radius", `${payload.radius ?? 13}px`);
   card.style.setProperty("--avatar-radius", payload.squareAvatars ? "10px" : "50%");
 
-  document.getElementById("title").textContent = payload.title || "Obsidian";
+  document.getElementById("title").textContent = payload.title || "Valanium";
   document.getElementById("message").textContent = payload.text || "Новое сообщение";
 
   avatar.textContent = payload.initials || "O";
@@ -78,5 +78,5 @@ function paint(payload) {
   timer = setTimeout(dismiss, LIFETIME);
 }
 
-listen("obsidian:notification", (event) => paint(event.payload));
-paint(window.__OBSIDIAN_NOTIFICATION__ || {});
+listen("valanium:notification", (event) => paint(event.payload));
+paint(window.__VALANIUM_NOTIFICATION__ || {});

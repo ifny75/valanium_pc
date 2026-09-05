@@ -1,4 +1,4 @@
-//! Windows-клиент Obsidian: тонкая обвязка вокруг obsidian-core.
+//! Windows-клиент Valanium: тонкая обвязка вокруг valanium-core.
 //!
 //! Здесь нет ни криптографии, ни ключей, ни сетевого протокола — всё это живёт
 //! в ядре. Задача этого файла ровно две: открыть базу под введённым паролем и
@@ -10,13 +10,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod badge;
+mod onionize;
 
 use std::os::windows::process::CommandExt;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
-use obsidian_core::client::Engine;
-use obsidian_core::command::Command;
+use valanium_core::client::Engine;
+use valanium_core::command::Command;
 use rand_core::{OsRng, RngCore};
 use tauri::{AppHandle, Emitter, Manager, State};
 use windows::Win32::Foundation::{LocalFree, HLOCAL};
@@ -25,19 +26,19 @@ use windows::Win32::Security::Cryptography::{
 };
 
 /// Не показывать консоль при запуске сторонней программы.
-const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+pub(crate) const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 /// Канал, по которому события ядра доезжают до окна.
-const EVENT_CHANNEL: &str = "obsidian:event";
+const EVENT_CHANNEL: &str = "valanium:event";
 
 /// Окно-карточка уведомления. Одно на все уведомления, см. `show_desktop_notification`.
 const NOTIFICATION_LABEL: &str = "notification";
 
 /// Канал, по которому карточке приезжает следующее уведомление.
-const NOTIFICATION_CHANNEL: &str = "obsidian:notification";
+const NOTIFICATION_CHANNEL: &str = "valanium:notification";
 
 /// Канал, по которому карточка просит открыть беседу.
-const OPEN_CHAT_CHANNEL: &str = "obsidian:open-chat";
+const OPEN_CHAT_CHANNEL: &str = "valanium:open-chat";
 
 #[derive(Default)]
 struct Core {
@@ -45,7 +46,7 @@ struct Core {
 }
 
 fn data_paths(app: &AppHandle) -> Result<(PathBuf, PathBuf), String> {
-    let db = match std::env::var("OBSIDIAN_DB") {
+    let db = match std::env::var("VALANIUM_DB") {
         Ok(path) if !path.is_empty() => PathBuf::from(path),
         _ => {
             let root = app
@@ -58,11 +59,11 @@ fn data_paths(app: &AppHandle) -> Result<(PathBuf, PathBuf), String> {
                 .ok()
                 .map(|value| value.trim().to_string())
                 .filter(|name| {
-                    name.starts_with("obsidian-session-")
+                    name.starts_with("valanium-session-")
                         && name.ends_with(".db")
                         && name.chars().all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '-' | '_' | '.'))
                 });
-            root.join(selected.as_deref().unwrap_or("obsidian.db"))
+            root.join(selected.as_deref().unwrap_or("valanium.db"))
         }
     };
     if let Some(parent) = db.parent() {
@@ -93,7 +94,7 @@ const LOCK_SALT_LEN: usize = 16;
 
 /// Энтропия DPAPI из пароля. Argon2id, те же параметры, что и у базы.
 fn lock_entropy(password: &str, salt: &[u8]) -> Result<Vec<u8>, String> {
-    obsidian_core::crypto::MasterKey::derive(password.as_bytes(), salt)
+    valanium_core::crypto::MasterKey::derive(password.as_bytes(), salt)
         .map(|key| key.into_bytes().to_vec())
         .map_err(|err| format!("не вывести ключ из пароля: {err}"))
 }
@@ -169,7 +170,7 @@ fn protect_with_entropy(secret: &[u8], entropy: Option<&[u8]>) -> Result<Vec<u8>
     unsafe {
         CryptProtectData(
             &input,
-            windows::core::w!("Obsidian database key"),
+            windows::core::w!("Valanium database key"),
             entropy_blob.as_ref().map(|blob| blob as *const _),
             None,
             None,
@@ -257,15 +258,15 @@ fn archive_legacy_database(db: &PathBuf) -> Result<PathBuf, String> {
 }
 
 fn verify_database_key(db: &PathBuf, secret: &[u8]) -> Result<(), String> {
-    let store = obsidian_core::store::Store::open(&db.to_string_lossy(), secret).map_err(
+    let store = valanium_core::store::Store::open(&db.to_string_lossy(), secret).map_err(
         |err| match err {
-            obsidian_core::CoreError::StoreLocked => "неверный пароль".to_string(),
+            valanium_core::CoreError::StoreLocked => "неверный пароль".to_string(),
             other => other.to_string(),
         },
     )?;
     if store.has_credentials().map_err(|err| err.to_string())? {
         store.load_credentials().map_err(|err| match err {
-            obsidian_core::CoreError::StoreLocked => "неверный пароль".to_string(),
+            valanium_core::CoreError::StoreLocked => "неверный пароль".to_string(),
             other => other.to_string(),
         })?;
     }
@@ -290,7 +291,7 @@ fn start_engine(app: &AppHandle, core: &Arc<Core>, password: Vec<u8>) -> Result<
         }),
     )
     .map_err(|err| match err {
-        obsidian_core::CoreError::StoreLocked => "неверный пароль".to_string(),
+        valanium_core::CoreError::StoreLocked => "неверный пароль".to_string(),
         other => other.to_string(),
     })?;
     *slot = Some(engine);
@@ -414,8 +415,8 @@ fn reset_legacy_database(app: AppHandle, core: State<'_, Arc<Core>>) -> Result<S
 /// пустой локальный профиль, а прежние файлы остаются нетронутыми.
 #[tauri::command]
 fn logout_local_account(app: AppHandle, core: State<'_, Arc<Core>>) -> Result<String, String> {
-    if std::env::var("OBSIDIAN_DB").is_ok_and(|path| !path.is_empty()) {
-        return Err("выход недоступен при запуске с OBSIDIAN_DB".to_string());
+    if std::env::var("VALANIUM_DB").is_ok_and(|path| !path.is_empty()) {
+        return Err("выход недоступен при запуске с VALANIUM_DB".to_string());
     }
 
     let engine = core
@@ -436,7 +437,7 @@ fn logout_local_account(app: AppHandle, core: State<'_, Arc<Core>>) -> Result<St
         .duration_since(std::time::UNIX_EPOCH)
         .map_err(|_| "системное время некорректно")?
         .as_millis();
-    let filename = format!("obsidian-session-{timestamp}-{}.db", std::process::id());
+    let filename = format!("valanium-session-{timestamp}-{}.db", std::process::id());
     let db = root.join(&filename);
     let key_path = db.with_extension("key.dpapi");
 
@@ -498,7 +499,7 @@ fn window_drag(window: tauri::Window) -> Result<(), String> {
 }
 
 /// Отдельное always-on-top окно: уведомление видно поверх рабочего стола и
-/// других программ, даже когда главное окно Obsidian находится сзади.
+/// других программ, даже когда главное окно Valanium находится сзади.
 ///
 /// Окно одно на все уведомления и переиспользуется: второе сообщение меняет
 /// содержимое уже открытой карточки, а не заводит рядом ещё одну. Так карточки
@@ -524,7 +525,7 @@ async fn show_desktop_notification(app: AppHandle, payload: serde_json::Value) -
     // событие пришлось бы ловить уже после загрузки страницы, и первая карточка
     // успела бы мигнуть пустой.
     let script = format!(
-        "window.__OBSIDIAN_NOTIFICATION__ = {};",
+        "window.__VALANIUM_NOTIFICATION__ = {};",
         serde_json::to_string(&payload).map_err(|err| err.to_string())?
     );
     let window = tauri::WebviewWindowBuilder::new(
@@ -532,7 +533,7 @@ async fn show_desktop_notification(app: AppHandle, payload: serde_json::Value) -
         NOTIFICATION_LABEL,
         tauri::WebviewUrl::App("notification.html".into()),
     )
-    .title("Obsidian")
+    .title("Valanium")
     .inner_size(card.width, card.height)
     .decorations(false)
     .transparent(true)
@@ -665,7 +666,7 @@ fn save_account_export(app: AppHandle, contents: String) -> Result<String, Strin
         .duration_since(std::time::UNIX_EPOCH)
         .map(|since| since.as_secs())
         .unwrap_or(0);
-    let path = folder.join(format!("obsidian-account-{stamp}.obsidian"));
+    let path = folder.join(format!("valanium-account-{stamp}.valanium"));
     std::fs::write(&path, contents).map_err(|err| format!("не записать файл: {err}"))?;
     Ok(path.to_string_lossy().into_owned())
 }
@@ -677,7 +678,7 @@ fn save_account_export(app: AppHandle, contents: String) -> Result<String, Strin
 /// по иконке на панели, а наведя на значок в трее, ждут словами.
 #[tauri::command]
 fn set_unread(app: AppHandle, window: tauri::Window, count: u32) -> Result<(), String> {
-    let title = if count == 0 { "Obsidian".to_owned() } else { format!("Obsidian ({count})") };
+    let title = if count == 0 { "Valanium".to_owned() } else { format!("Valanium ({count})") };
     window.set_title(&title).map_err(|err| err.to_string())?;
 
     let overlay = if count == 0 {
@@ -689,23 +690,23 @@ fn set_unread(app: AppHandle, window: tauri::Window, count: u32) -> Result<(), S
 
     if let Some(tray) = app.tray_by_id("main") {
         let tooltip = if count == 0 {
-            "Obsidian".to_owned()
+            "Valanium".to_owned()
         } else {
-            format!("Obsidian — непрочитанных: {count}")
+            format!("Valanium — непрочитанных: {count}")
         };
         let _ = tray.set_tooltip(Some(&tooltip));
     }
     Ok(())
 }
 
-/// Запускать ли Obsidian вместе с Windows.
+/// Запускать ли Valanium вместе с Windows.
 ///
 /// Через реестр, а не через ярлык в «Автозагрузке»: ярлык человек однажды
 /// перенесёт или потеряет вместе с профилем, а ключ переживает и то и другое.
 /// Пишем только в HKCU — для машины целиком нужны права администратора,
 /// которых у мессенджера быть не должно.
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
-const RUN_VALUE: &str = "Obsidian";
+const RUN_VALUE: &str = "Valanium";
 
 #[tauri::command]
 fn autostart_enabled() -> bool {
@@ -812,12 +813,12 @@ fn verify_release(manifest: String, signature: String) -> bool {
     ) else {
         return false;
     };
-    obsidian_core::keys::verify(&signature, manifest.as_bytes(), &public)
+    valanium_core::keys::verify(&signature, manifest.as_bytes(), &public)
 }
 
 #[tauri::command]
 fn open_update(url: String) -> Result<(), String> {
-    if !url.starts_with("https://getobsidian.xyz/downloads/") {
+    if !url.starts_with("https://valanium.com/downloads/") {
         return Err("недопустимый адрес обновления".into());
     }
     // CREATE_NO_WINDOW: запуск чужой программы из оконного приложения иначе
@@ -853,7 +854,7 @@ fn install_tray(app: &tauri::App) -> tauri::Result<()> {
     use tauri::menu::{MenuBuilder, MenuItemBuilder};
     use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
-    let open = MenuItemBuilder::with_id("open", "Открыть Obsidian").build(app)?;
+    let open = MenuItemBuilder::with_id("open", "Открыть Valanium").build(app)?;
     let quit = MenuItemBuilder::with_id("quit", "Выйти").build(app)?;
     let menu = MenuBuilder::new(app).items(&[&open, &quit]).build()?;
 
@@ -861,7 +862,7 @@ fn install_tray(app: &tauri::App) -> tauri::Result<()> {
         .icon(app.default_window_icon().cloned().ok_or_else(|| {
             tauri::Error::AssetNotFound("значок окна не задан".into())
         })?)
-        .tooltip("Obsidian")
+        .tooltip("Valanium")
         .menu(&menu)
         // Левая кнопка не должна открывать меню: по значку в трее щёлкают,
         // чтобы вернуть окно, а не чтобы выбрать пункт.
@@ -935,6 +936,10 @@ fn main() {
             set_unread,
             app_version,
             verify_release,
+            onionize::onionize_status,
+            onionize::onionize_install,
+            onionize::onionize_start,
+            onionize::onionize_stop,
             unlock_with_password,
             app_lock_enabled,
             set_app_lock,

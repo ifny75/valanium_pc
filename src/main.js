@@ -7,20 +7,39 @@
   потеря требовали бы новой сборки для всех.
 */
 const SERVER_URLS = Object.freeze({
-  auto: "obsidian://auto",
-  basic: "wss://getobsidian.xyz/ws",
-  multihop: "wss://getobsidian.xyz/multihop/ws",
-  onion: "obsidian://onion",
+  auto: "valanium://auto",
+  basic: "wss://valanium.com/ws",
+  multihop: "wss://valanium.com/multihop/ws",
+  onion: "valanium://onion",
 });
 
+/** Узлы, из которых можно выбрать второе плечо. Имена те же, что на /status. */
+const HOP_NODES = Object.freeze(["alpha", "beta", "gamma"]);
+
+/*
+  Адрес для Multi-hop с закреплённым вторым узлом.
+
+  Первый узел выбирает Cloudflare, и повлиять на это нечем: у всех relay один
+  общий адрес, отвечает ближайший коннектор. А вот кому он передаст дальше —
+  выбирает человек.
+
+  Если Cloudflare привёл на тот самый узел, что выбран вторым, узел отвечает
+  421: двух разных плеч из одного не сделать. Ядро воспримет это как отказ
+  соединения и попробует снова — следующая попытка почти наверняка придёт на
+  другой вход.
+*/
 function serverUrl() {
-  return SERVER_URLS[preferences.transport] || SERVER_URLS.basic;
+  const mode = preferences.transport;
+  if (mode === "multihop" && HOP_NODES.includes(preferences.multihopNode)) {
+    return `wss://valanium.com/multihop/${preferences.multihopNode}/ws`;
+  }
+  return SERVER_URLS[mode] || SERVER_URLS.basic;
 }
 // Версия не хранится здесь копией: её отдаёт ядро приложения (Cargo.toml).
 // Хардкод в окне уже расходился с собранным бинарём, и клиент вечно
 // предлагал обновиться на версию, которая на нём и стояла.
 let appVersion = "…";
-const RELEASES_URL = "https://getobsidian.xyz/v1/releases/latest";
+const RELEASES_URL = "https://valanium.com/v1/releases/latest";
 const { invoke } = window.__TAURI__.core;
 
 /**
@@ -292,24 +311,24 @@ $("reset-legacy").addEventListener("click", async () => {
   }
 });
 
-const ONBOARDING_LANGUAGE = "obsidian.onboarding.language";
-const ONBOARDING_COMPLETE = "obsidian.onboarding.complete";
+const ONBOARDING_LANGUAGE = "valanium.onboarding.language";
+const ONBOARDING_COMPLETE = "valanium.onboarding.complete";
 let onboardingLanguage = localStorage.getItem(ONBOARDING_LANGUAGE)
   || (navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en");
 let chosenTransport = "auto";
 
 const onboardingCopy = {
   ru: {
-    introTitle: "obsidian",
+    introTitle: "valanium",
     introParts: [
-      "Obsidian — приватный мессенджер с надёжным сквозным шифрованием.",
+      "Valanium — приватный мессенджер с надёжным сквозным шифрованием.",
       "Сообщения шифруются на вашем устройстве. Главный сервер скрыт за relay-инфраструктурой, а маршрут можно выбрать между Relay, Multihop и Tor.",
       "Приватность заложена в архитектуру. Открытый код. Номер телефона не нужен.",
     ],
     start: "Проведите, чтобы начать", next: "Продолжить", routeText: "Выберите, как приложение будет соединяться с сетью. Настройку всегда можно изменить позже.",
     relay: "Быстрое прямое соединение", multi: "Дополнительный промежуточный узел", tor: "Максимальная сетевая приватность",
-    entryTitle: "Начните с Obsidian", entryLead: "Имя увидят собеседники. Пароль нужен для запасного входа с другого устройства.",
-    routeTitle: "сервер Obsidian", back: "Назад", relayTitle: "Relay (автоматически)",
+    entryTitle: "Начните с Valanium", entryLead: "Имя увидят собеседники. Пароль нужен для запасного входа с другого устройства.",
+    routeTitle: "сервер Valanium", back: "Назад", relayTitle: "Relay (автоматически)",
     username: "Имя пользователя", usernamePlaceholder: "username", recoveryPassword: "Пароль восстановления", passwordPlaceholder: "Минимум 10 символов",
     register: "Зарегистрироваться", signIn: "← Вернуться ко входу", recoverWords: "Восстановить по 24 словам", skip: "Skip — продолжить без логина и пароля",
     recoveryTitle: "Recovery phrase", recoveryLead: "Введите 24 слова в том же порядке. За один шаг показываются восемь слов.",
@@ -319,16 +338,16 @@ const onboardingCopy = {
     confirmPhrase: "Я переписал(а) фразу на бумагу и понимаю, что второй раз её не покажут", security: "Фраза и пароль никогда не передаются с устройства в открытом виде.",
   },
   en: {
-    introTitle: "obsidian",
+    introTitle: "valanium",
     introParts: [
-      "Obsidian is a private messenger with reliable end-to-end encryption.",
+      "Valanium is a private messenger with reliable end-to-end encryption.",
       "Messages are encrypted on your device. The main server stays behind relay infrastructure, with Relay, Multihop and Tor routing.",
       "Privacy by design. Open source. No phone number required.",
     ],
     start: "Slide to start", next: "Continue", routeText: "Choose how the app connects to the network. You can change this later.",
     relay: "Fast direct connection", multi: "An additional intermediate relay", tor: "Maximum network privacy",
-    entryTitle: "Get started with Obsidian", entryLead: "Your contacts see the username. The password enables recovery on another device.",
-    routeTitle: "Obsidian server", back: "Back", relayTitle: "Relay (automatic)",
+    entryTitle: "Get started with Valanium", entryLead: "Your contacts see the username. The password enables recovery on another device.",
+    routeTitle: "Valanium server", back: "Back", relayTitle: "Relay (automatic)",
     username: "Username", usernamePlaceholder: "username", recoveryPassword: "Recovery password", passwordPlaceholder: "At least 10 characters",
     register: "Create account", signIn: "← Return to sign in", recoverWords: "Recover with 24 words", skip: "Skip — continue without login and password",
     recoveryTitle: "Recovery phrase", recoveryLead: "Enter all 24 words in the original order. Eight words are shown per step.",
@@ -700,7 +719,7 @@ function openRecovery(mode = "code") {
   $("recover-error").textContent = "";
   const russian = onboardingLanguage === "ru";
   $("recover-title").textContent = mode === "password"
-    ? (russian ? "Войти в Obsidian" : "Sign in to Obsidian")
+    ? (russian ? "Войти в Valanium" : "Sign in to Valanium")
     : (russian ? "Recovery phrase" : "Recovery phrase");
   $("recover-lead").textContent = mode === "password"
     ? (russian ? "Введите логин и пароль восстановления, созданные на другом устройстве." : "Enter the recovery login and password created on another device.")
@@ -806,7 +825,7 @@ function resetRecoveryButtons() {
 async function boot() {
   showBoot("Защищаем локальное хранилище…");
   try {
-    await listen("obsidian:event", ({ payload }) => {
+    await listen("valanium:event", ({ payload }) => {
       try {
         const event = JSON.parse(payload);
         const handler = handlers[event.type];
@@ -859,13 +878,13 @@ let lookupQuery = null;
  * написать новому собеседнику.
  */
 /**
- * Ссылка на публичный канал: `getobsidian.xyz/channel/notes`.
+ * Ссылка на публичный канал: `valanium.com/channel/notes`.
  *
  * Отдельного обработчика протокола в системе нет, и заводить его ради этого —
  * значит просить у человека установку и права. Вставленная в поле ссылка
  * открывает канал ничуть не хуже.
  */
-const CHANNEL_LINK = /^(?:https?:\/\/)?(?:www\.)?getobsidian\.xyz\/channel\/([a-z][a-z0-9_]{2,29})\/?$/i;
+const CHANNEL_LINK = /^(?:https?:\/\/)?(?:www\.)?getvalanium\.xyz\/channel\/([a-z][a-z0-9_]{2,29})\/?$/i;
 
 function looksLikeAddress(raw) {
   return CHANNEL_LINK.test(raw)
@@ -1892,12 +1911,20 @@ const handlers = {
     setConnection("connecting", "проверяем ключи…");
   },
 
+  support(event) {
+    renderSupport(event.report ?? {});
+  },
+
   admin(event) {
     renderAdmin(event.report ?? {});
   },
 
   storage(event) {
     renderStorage(event);
+  },
+
+  devices_revoked(event) {
+    toast(`Другие устройства отключены: ${Number(event.count || 0)}`);
   },
 
   account_exported(event) {
@@ -2500,7 +2527,7 @@ $("logout-account").addEventListener("click", async () => {
   button.textContent = "Выходим…";
   try {
     await invoke("logout_local_account");
-    localStorage.removeItem("obsidian.preferences");
+    localStorage.removeItem("valanium.preferences");
     window.location.reload();
   } catch (error) {
     button.disabled = false;
@@ -2622,7 +2649,7 @@ $("backup-totp").addEventListener("change", () => {
   const on = $("backup-totp").checked;
   $("backup-totp-box").classList.toggle("hidden", !on);
   // Секрет заводится на устройстве и до подтверждения кодом никуда не уходит.
-  if (on && !state.totpSecret) submit({ type: "totp_secret", login: $("backup-login").value.trim() || "obsidian" });
+  if (on && !state.totpSecret) submit({ type: "totp_secret", login: $("backup-login").value.trim() || "valanium" });
 });
 
 $("backup-skip").addEventListener("click", () => {
@@ -2754,7 +2781,7 @@ const preferenceDefaults = {
 
 function loadPreferences() {
   try {
-    const saved = JSON.parse(localStorage.getItem("obsidian.preferences") || "{}");
+    const saved = JSON.parse(localStorage.getItem("valanium.preferences") || "{}");
     // До этой версии белый был не выбором пользователя, а значением по
     // умолчанию. Однократно переводим такие установки на новый фиолетовый
     // акцент; после этого любой цвет, включая белый, сохраняется буквально.
@@ -2772,7 +2799,7 @@ function loadPreferences() {
 let preferences = loadPreferences();
 
 function savePreferences() {
-  localStorage.setItem("obsidian.preferences", JSON.stringify(preferences));
+  localStorage.setItem("valanium.preferences", JSON.stringify(preferences));
 }
 
 function accentTextFor(color) {
@@ -2830,6 +2857,10 @@ function applyPreferences() {
   document.body.classList.toggle("compact", preferences.compact);
   document.body.classList.toggle("square-avatars", preferences.squareAvatars);
   document.body.classList.toggle("tails", preferences.tails);
+  // Выбор второго узла имеет смысл только в Multi-hop: в остальных режимах
+  // второго узла нет вовсе, и показывать переключатель значило бы обещать
+  // настройку, которая ни на что не влияет.
+  $("hop-picker")?.classList.toggle("hidden", preferences.transport !== "multihop");
 
   for (const button of document.querySelectorAll("#theme-segment [data-theme]")) {
     button.classList.toggle("active", button.dataset.theme === preferences.theme);
@@ -2839,6 +2870,7 @@ function applyPreferences() {
   }
   for (const [selector, attribute, current] of [
     ["#transport-segment [data-transport]", "transport", preferences.transport],
+    ["#hop-segment [data-hop]", "hop", preferences.multihopNode ?? "auto"],
     ["#divider-segment [data-dividers]", "dividers", preferences.dividers],
     ["#wallpaper-grid [data-wallpaper]", "wallpaper", preferences.wallpaper],
     ["#font-segment [data-font]", "font", preferences.uiFont],
@@ -2903,7 +2935,7 @@ function syncUnread() {
 }
 
 function syncWindowTitle() {
-  $("window-title").textContent = settingsPage.classList.contains("hidden") ? "Obsidian" : "Obsidian — Настройки";
+  $("window-title").textContent = settingsPage.classList.contains("hidden") ? "Valanium" : "Valanium — Настройки";
 }
 
 $("appearance-open").addEventListener("click", () => {
@@ -3041,7 +3073,7 @@ $("notification-sound-toggle").addEventListener("click", () => {
 });
 
 $("notification-test").addEventListener("click", () => {
-  showDesktopNotification({ title: "Obsidian", text: "Так будет выглядеть новое сообщение" });
+  showDesktopNotification({ title: "Valanium", text: "Так будет выглядеть новое сообщение" });
 });
 
 /** Сбрасывает собранные пузыри, оставляя список бесед на месте. */
@@ -3108,7 +3140,7 @@ applyPreferences();
   беседу. Если её ещё нет в списке — заводим, иначе уведомление о первом
   сообщении от нового собеседника вело бы в пустоту.
 */
-listen("obsidian:open-chat", ({ payload }) => {
+listen("valanium:open-chat", ({ payload }) => {
   const peer = typeof payload === "string" ? payload : payload?.device;
   if (!peer) return;
   if (!state.conversations.has(peer) && !isGroupKey(peer)) {
@@ -3596,6 +3628,164 @@ for (const button of document.querySelectorAll("#transport-segment [data-transpo
     window.setTimeout(() => submit({ type: "connect", url: serverUrl() }), 250);
     toast(mode === "onion" ? "Подключаемся через Tor…"
       : mode === "auto" ? "Выбираем доступный маршрут…" : "Меняем маршрут…");
+    // Выбрали Onion — начинаем строить цепь немедленно, параллельно с
+    // попыткой подключиться. Иначе первая попытка упрётся в неподнятый Tor.
+    if (mode === "onion") prewarmOnionize();
+  });
+}
+
+/*
+  Встроенный Tor.
+
+  Проверок две, и обе обязательны. Подпись манифеста тем же ключом, что и у
+  обновлений, говорит, какой файл правильный; хеш скачанного говорит, что
+  приехал именно он. Одна другую не заменяет.
+
+  Скачивание, сверка хеша и запуск живут в Rust намеренно: этот файл потом
+  выполняется, и решать о его подлинности во фронтенде — не то место.
+*/
+const ONIONIZE_URL = "https://valanium.com/downloads/onionize.json";
+
+async function refreshOnionize() {
+  const card = $("onionize-card");
+  if (!card) return;
+  const state = await invoke("onionize_status").catch(() => null);
+  // Именно объект: сборка без этой команды ответит чем угодно, и трогать поля
+  // у не-объекта значит показать карточку в выдуманном состоянии.
+  if (!state || typeof state !== "object") return;
+
+  const note = $("onionize-note");
+  const hint = $("onionize-hint");
+  $("onionize-install").classList.toggle("hidden", state.installed);
+  $("onionize-start").classList.toggle("hidden", !state.installed || state.running || onionizeWarming);
+  $("onionize-stop").classList.toggle("hidden", !state.running);
+
+  if (onionizeWarming) {
+    note.textContent = "Строим цепь Tor заранее, чтобы Onion не заставлял ждать.";
+    hint.textContent = "Первый раз это занимает около минуты. Приложением можно пользоваться.";
+  } else if (state.running) {
+    note.textContent = "Tor работает внутри приложения. Onion ходит через него, ставить ничего не нужно.";
+    hint.textContent = `Локальный вход: ${state.socks ?? "—"}`;
+  } else if (state.installed) {
+    note.textContent = "Tor установлен, но выключен. Включите — и Onion заработает без Tor Browser.";
+    hint.textContent = "Первый запуск строит цепь около минуты, дальше примерно десять секунд.";
+  } else {
+    note.textContent = "Чтобы Onion работал без Tor Browser и Orbot, нужен небольшой отдельный файл. Он подписан тем же ключом, что и обновления, и проверяется до запуска.";
+    hint.textContent = "Первый запуск строит цепь Tor примерно минуту — это нормально и происходит один раз.";
+  }
+}
+
+/*
+  Фоновый прогрев.
+
+  Замерено: первая цепь строится около пятидесяти секунд, последующие — около
+  трёх. Начинать это по нажатию «Onion» значит показать человеку минуту
+  неработающего приложения, а минута молчания читается как поломка. Поэтому
+  цепь строится заранее — как только видно, что она понадобится.
+
+  Греем только при выбранном Onion. Держать Tor поднятым на обычных маршрутах
+  значило бы тратить батарею и трафик на то, чем человек не пользуется, и
+  оставлять след там, где его не просили.
+*/
+let onionizeWarming = false;
+
+async function prewarmOnionize() {
+  if (onionizeWarming || preferences.transport !== "onion") return;
+  const state = await invoke("onionize_status").catch(() => null);
+  if (!state || typeof state !== "object") return;
+  if (!state.installed || state.running) return;
+
+  onionizeWarming = true;
+  refreshOnionize();
+  try {
+    await invoke("onionize_start");
+  } catch {
+    // Молча. Человек не просил этого прямо сейчас, и всплывающая жалоба при
+    // запуске — худший способ сообщить о необязательной неудаче. Состояние
+    // видно в карточке, а попытка подключиться через Onion скажет прямо.
+  } finally {
+    onionizeWarming = false;
+    refreshOnionize();
+  }
+}
+
+$("onionize-install")?.addEventListener("click", async () => {
+  const button = $("onionize-install");
+  button.disabled = true;
+  const previous = button.textContent;
+  button.textContent = "Скачиваем…";
+  try {
+    const response = await fetch(ONIONIZE_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if (typeof payload.manifest !== "string" || typeof payload.signature !== "string") {
+      throw new Error("ответ без подписи");
+    }
+    const trusted = await invoke("verify_release", {
+      manifest: payload.manifest,
+      signature: payload.signature,
+    });
+    // Без подписи не продолжаем вовсе: скачать и запустить неподписанное —
+    // это отдать машину тому, кто подменит файл.
+    if (!trusted) throw new Error("подпись не сходится");
+
+    const build = JSON.parse(payload.manifest).windows;
+    if (!build) throw new Error("в манифесте нет сборки для Windows");
+    await invoke("onionize_install", {
+      url: build.url,
+      sha256: build.sha256,
+      bytes: build.bytes,
+    });
+    toast("Tor установлен");
+  } catch (error) {
+    toast(`Не удалось установить Tor: ${error.message ?? error}`);
+  } finally {
+    button.disabled = false;
+    button.textContent = previous;
+    refreshOnionize();
+    // Поставили при выбранном Onion — греем сразу, не дожидаясь, пока человек
+    // упрётся в минуту ожидания.
+    prewarmOnionize();
+  }
+});
+
+$("onionize-start")?.addEventListener("click", async () => {
+  const button = $("onionize-start");
+  button.disabled = true;
+  const previous = button.textContent;
+  // Честный текст вместо крутилки: минута молчания читается как поломка.
+  button.textContent = "Строим цепь Tor…";
+  try {
+    const socks = await invoke("onionize_start");
+    toast(`Tor готов: ${socks}`);
+  } catch (error) {
+    toast(`Tor не запустился: ${error}`);
+  } finally {
+    button.disabled = false;
+    button.textContent = previous;
+    refreshOnionize();
+  }
+});
+
+$("onionize-stop")?.addEventListener("click", async () => {
+  await invoke("onionize_stop").catch((error) => toast(`Tor: ${error}`));
+  refreshOnionize();
+});
+
+refreshOnionize();
+prewarmOnionize();
+
+for (const button of document.querySelectorAll("#hop-segment [data-hop]")) {
+  button.addEventListener("click", () => {
+    const choice = button.dataset.hop === "auto" ? null : button.dataset.hop;
+    if (choice === (preferences.multihopNode ?? null)) return;
+    preferences.multihopNode = choice;
+    savePreferences();
+    applyPreferences();
+    if (preferences.transport !== "multihop") return;
+    submit({ type: "disconnect" });
+    window.setTimeout(() => submit({ type: "connect", url: serverUrl() }), 250);
+    toast(choice ? `Второй узел: ${choice}` : "Второй узел выбирается сам");
   });
 }
 
@@ -4168,6 +4358,134 @@ function renderAdmin(report) {
   }
 }
 
+let supportOffset = 0;
+let supportOpen = null;
+
+/*
+  Список писем и одна переписка в одном месте.
+
+  Открытая переписка разворачивается прямо в строке, а не отдельным окном:
+  писем тут единицы, и гонять человека по модальным окнам ради двух абзацев —
+  это работа, которой можно не быть.
+*/
+function renderSupport(report) {
+  const host = $("support-threads");
+  host.replaceChildren();
+
+  const badge = $("support-badge");
+  const unread = Number(report.unreadThreads ?? 0);
+  badge.textContent = unread > 0 ? String(unread) : "";
+  badge.classList.toggle("hidden", unread === 0);
+
+  if (report.thread) {
+    supportOpen = report.thread.id;
+    host.appendChild(renderSupportThread(report));
+    return;
+  }
+
+  const threads = report.threads ?? [];
+  if (threads.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "admin-empty";
+    empty.textContent = "Писем пока нет.";
+    host.appendChild(empty);
+  }
+  for (const thread of threads) {
+    const row = document.createElement("div");
+    row.className = "support-thread" + (thread.unread > 0 ? " unread" : "") + (thread.closed ? " closed" : "");
+
+    const copy = document.createElement("div");
+    const title = document.createElement("b");
+    title.textContent = thread.subject;
+    const who = document.createElement("small");
+    who.textContent = `${thread.address} · ${new Date(thread.updatedAt).toLocaleString()}`
+      + (thread.closed ? " · закрыта" : "");
+    copy.append(title, who);
+
+    const open = document.createElement("button");
+    open.type = "button";
+    open.className = "ghost-button";
+    open.textContent = "Открыть";
+    open.addEventListener("click", () => submit({ type: "support_get", thread: thread.id }));
+
+    row.append(copy, open);
+    host.appendChild(row);
+  }
+
+  supportOffset = report.offset ?? 0;
+  $("support-prev").disabled = supportOffset === 0;
+  $("support-next").disabled = !report.more;
+}
+
+function renderSupportThread(report) {
+  const wrap = document.createElement("div");
+  wrap.className = "support-open";
+
+  const head = document.createElement("div");
+  head.className = "support-open-head";
+  const title = document.createElement("b");
+  title.textContent = report.thread.subject;
+  const who = document.createElement("small");
+  who.textContent = report.thread.address;
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "ghost-button";
+  back.textContent = "К списку";
+  back.addEventListener("click", () => {
+    supportOpen = null;
+    submit({ type: "support_get", offset: supportOffset });
+  });
+  head.append(title, who, back);
+  wrap.appendChild(head);
+
+  for (const message of report.messages ?? []) {
+    const item = document.createElement("div");
+    item.className = "support-msg in";
+    const when = document.createElement("small");
+    when.textContent = new Date(message.createdAt).toLocaleString();
+    const body = document.createElement("p");
+    // textContent, а не innerHTML: письмо пишет посторонний, и разметка из
+    // него в нашем окне — это чужой текст, притворяющийся нашим.
+    body.textContent = message.body;
+    item.append(when, body);
+    wrap.appendChild(item);
+  }
+
+  // Отвечать отсюда нельзя, и обещать этого не будем: сервер письма только
+  // принимает. Копия каждого лежит в почтовом ящике владельца — оттуда и
+  // отвечают обычным «ответить» в почтовом клиенте.
+  const note = document.createElement("p");
+  note.className = "admin-empty";
+  note.textContent = `Отвечать — из своего почтового ящика: копия письма от ${report.thread.address} лежит там.`;
+  wrap.appendChild(note);
+
+  const actions = document.createElement("div");
+  actions.className = "setting-actions";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "ghost-button";
+  close.textContent = report.thread.closed ? "Открыть заново" : "Пометить решённым";
+  close.addEventListener("click", () =>
+    submit({ type: "support_mark", thread: report.thread.id, closed: !report.thread.closed }));
+  actions.appendChild(close);
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
+$("support-refresh").addEventListener("click", () => {
+  $("support-status").textContent = "";
+  submit(supportOpen ? { type: "support_get", thread: supportOpen } : { type: "support_get", offset: supportOffset });
+});
+$("support-prev").addEventListener("click", () => {
+  supportOffset = Math.max(0, supportOffset - 40);
+  submit({ type: "support_get", offset: supportOffset });
+});
+$("support-next").addEventListener("click", () => {
+  supportOffset += 40;
+  submit({ type: "support_get", offset: supportOffset });
+});
+
 $("admin-users-prev").addEventListener("click", () => {
   submit({ type: "admin_get", offset: Math.max(0, adminOffset - 40) });
 });
@@ -4255,7 +4573,7 @@ async function checkForUpdates(showFailure = false) {
     }
     $("update-verify").classList.toggle("hidden", !available);
     $("update-hash").textContent = available ? `Ожидаемый SHA-256: ${release.sha256}` : "";
-    if (available) toast(`Доступно обновление Obsidian ${release.version}`);
+    if (available) toast(`Доступно обновление Valanium ${release.version}`);
   } catch (error) {
     const reason = String(error?.message ?? error);
     if (status) status.textContent = `Версия ${appVersion} · не подтвердить: ${reason}`;
@@ -4390,11 +4708,12 @@ $("invite-to-group").addEventListener("click", () => {
   if (!group) return;
   const modal = document.createElement("div");
   modal.className = "modal";
-  modal.innerHTML = `<div class="modal-card"><div class="modal-header"><h2>Позвать в «${group.title}»</h2></div>`
+  modal.innerHTML = `<div class="modal-card"><div class="modal-header"><h2 data-group-title></h2></div>`
     + `<div class="group-form"><input data-query type="text" placeholder="@имя, OBS-код или адрес устройства" /></div>`
     + `<p class="modal-copy">Приглашённый получит ключи группы и сможет читать то, что будет написано дальше. Прежние сообщения ему не откроются.</p>`
     + `<div class="setting-actions peer-actions"><button class="ghost-button" data-no>Отмена</button>`
     + `<button class="ghost-button" data-yes>Позвать</button></div></div>`;
+  modal.querySelector("[data-group-title]").textContent = `Позвать в «${group.title}»`;
   const close = () => modal.remove();
   modal.querySelector("[data-no]").addEventListener("click", close);
   modal.querySelector("[data-yes]").addEventListener("click", () => {
@@ -4417,7 +4736,10 @@ $("leave-group").addEventListener("click", () => {
   );
 });
 
-$("admin-refresh").addEventListener("click", () => submit({ type: "admin_get", offset: adminOffset }));
+$("admin-refresh").addEventListener("click", () => {
+  submit({ type: "admin_get", offset: adminOffset });
+  submit({ type: "support_get", offset: 0 });
+});
 for (const [id, action] of [["admin-block", "block"], ["admin-unblock", "unblock"]]) {
   $(id).addEventListener("click", () => {
     const reference = $("admin-reference").value.trim();
@@ -4435,7 +4757,7 @@ function usernameStatus(text) {
 
 /** Личная ссылка. Тот же вид, что у канала: домен, раздел, имя. */
 function usernameLink(name) {
-  return `https://getobsidian.xyz/u/${name}`;
+  return `https://valanium.com/u/${name}`;
 }
 
 function renderUsername() {
@@ -4806,7 +5128,7 @@ function channelRole(channel) {
 
 /** Публичная ссылка на канал — то, чем делятся вместо адреса устройства. */
 function channelLink(channel) {
-  return `https://getobsidian.xyz/channel/${channel.handle}`;
+  return `https://valanium.com/channel/${channel.handle}`;
 }
 
 function paintChannelIcon(node, channel) {
@@ -5163,7 +5485,7 @@ $("channel-create").addEventListener("click", () => {
     + `<div class="handle-field"><i>@</i><input data-handle type="text" placeholder="notes" `
     + `maxlength="30" autocomplete="off" spellcheck="false" /></div>`
     + `<div class="link-preview static"><span class="link-preview-copy">`
-    + `<small>Ссылка на канал</small><b data-link>getobsidian.xyz/channel/…</b></span></div>`
+    + `<small>Ссылка на канал</small><b data-link>valanium.com/channel/…</b></span></div>`
     + `<input data-title type="text" placeholder="Название" maxlength="64" />`
     + `<input data-about type="text" placeholder="Описание, необязательно" maxlength="280" />`
     + `</div>`
@@ -5181,8 +5503,8 @@ $("channel-create").addEventListener("click", () => {
     const handle = handleInput.value.trim().replace(/^@/, "").toLowerCase();
     const valid = CHANNEL_HANDLE.test(handle);
     link.textContent = handle === ""
-      ? "getobsidian.xyz/channel/…"
-      : `getobsidian.xyz/channel/${handle}`;
+      ? "valanium.com/channel/…"
+      : `valanium.com/channel/${handle}`;
     link.classList.toggle("bad", handle !== "" && !valid);
     create.disabled = !valid || modal.querySelector("[data-title]").value.trim() === "";
   };
@@ -5343,7 +5665,7 @@ function renderInvites() {
       invite.ttl_sec === 0 ? "бессрочно" : `на ${humanTtl(invite.ttl_sec)}`,
     ].join(" · ");
     const link = document.createElement("code");
-    link.textContent = `obsidian://invite/${invite.pass}`;
+    link.textContent = `valanium://invite/${invite.pass}`;
     copy.append(title, terms, link);
     row.appendChild(copy);
 
@@ -5355,7 +5677,7 @@ function renderInvites() {
     copyButton.className = "ghost-button";
     copyButton.textContent = "Скопировать";
     copyButton.addEventListener("click", () =>
-      copyText(`obsidian://invite/${invite.pass}`, "Ссылка скопирована"));
+      copyText(`valanium://invite/${invite.pass}`, "Ссылка скопирована"));
 
     const revoke = document.createElement("button");
     revoke.type = "button";
@@ -5740,6 +6062,19 @@ $("open-search").addEventListener("click", () => {
   const hidden = panel.classList.toggle("hidden");
   if (hidden) return closeSearch();
   $("chat-search-input").focus();
+});
+
+$("revoke-other-devices").addEventListener("click", () => {
+  confirmAction(
+    "Отключить другие устройства?",
+    "Их старые ключи будут заблокированы навсегда. Подключённым останется только этот компьютер.",
+    () => submit({ type: "revoke_other_devices" }),
+  );
+});
+
+$("call-button")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  toast("Функция звонков ещё не реализована и появится скоро");
 });
 
 $("chat-search-input").addEventListener("input", runSearch);

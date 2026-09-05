@@ -1,7 +1,7 @@
 [package]
 # Версия клиента. Отсюда её берёт и Tauri (в tauri.conf.json её нет
 # намеренно), и окно — командой app_version.
-name = "obsidian-windows"
+name = "valanium-windows"
 version = "0.11.0"
 edition = "2021"
 rust-version = "1.80"
@@ -16,7 +16,7 @@ tauri-build = { version = "2", features = [] }
 # клиент обязан собираться тем же ядром, которым его собрали и подписали,
 # иначе «проверьте сами» перестаёт быть проверкой. Обновление ядра —
 # отдельный осознанный коммит сюда.
-obsidian-core = { git = "https://github.com/ifny75/obsidian", rev = "27f83c47495230e064a34faba758c9f65323d4fe" }
+valanium-core = { git = "https://github.com/ifny75/valanium_main", rev = "a557f8b8b06e74da17faa4aaadcc3971d7e6939c" }
 tauri = { version = "2", features = ["tray-icon"] }
 serde_json = "1"
 # Разбор шестнадцатеричных строк: ключ и подпись манифеста обновлений.
@@ -26,10 +26,12 @@ windows = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cr
 # Обработчик запросов разрешений WebView2. Версия совпадает с той, что уже
 # тянет wry, — иначе в дереве оказались бы два несовместимых COM-слоя.
 webview2-com = "0.38"
+ureq = { version = "2", default-features = false, features = ["tls"] }
+sha2 = "0.10"
 
 [features]
 # Проброс фичи ядра: платный вход в TON по умолчанию выключен.
-ton = ["obsidian-core/ton"]
+ton = ["valanium-core/ton"]
 
 [profile.release]
 opt-level = "z"
