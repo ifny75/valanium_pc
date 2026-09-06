@@ -2,7 +2,7 @@
 # Версия клиента. Отсюда её берёт и Tauri (в tauri.conf.json её нет
 # намеренно), и окно — командой app_version.
 name = "valanium-windows"
-version = "0.12.0"
+version = "0.12.2"
 edition = "2021"
 rust-version = "1.80"
 publish = false
@@ -12,11 +12,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 # Ядро линкуется напрямую: FFI здесь не нужен, обе стороны на Rust.
-# Ядро живёт в своём репозитории. Ревизия пинится жёстко, а не веткой:
-# клиент обязан собираться тем же ядром, которым его собрали и подписали,
-# иначе «проверьте сами» перестаёт быть проверкой. Обновление ядра —
-# отдельный осознанный коммит сюда.
-valanium-core = { git = "https://github.com/ifny75/valanium_main", rev = "a557f8b8b06e74da17faa4aaadcc3971d7e6939c" }
+valanium-core = { git = "https://github.com/ifny75/valanium_main", rev = "bdb0d6de3b3953df3145c8bee3511a0f13c35e84" }
 tauri = { version = "2", features = ["tray-icon"] }
 serde_json = "1"
 # Разбор шестнадцатеричных строк: ключ и подпись манифеста обновлений.
