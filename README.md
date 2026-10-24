@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="valanium_pc.png" alt="Valanium pc" width="100%" />
+  
+
 # valanium-windows
 
 Windows-клиент: WebView2 для интерфейса, [valanium-core](../valanium-core) для всего остального.
