@@ -3160,3 +3160,6 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
 .peer-head,
 .profile-settings-head{grid-template-columns:auto minmax(0,1fr)}
 .profile-detail{grid-template-columns:minmax(0,auto) minmax(150px,1fr)}
+
+/* Horizontal message gestures coexist with native vertical scrolling. */
+#messages li[data-message-id] { touch-action: pan-y; }
