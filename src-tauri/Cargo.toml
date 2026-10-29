@@ -12,7 +12,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 # Ядро линкуется напрямую: FFI здесь не нужен, обе стороны на Rust.
-valanium-core = { git = "https://github.com/ifny75/valanium_main", rev = "928aab4773926dc463f635725702c2cd2de09fad" }
+valanium-core = { git = "https://github.com/ifny75/valanium_main", rev = "e282729f51bbd72a0e547b0e19551a9fa962d053" }
 tauri = { version = "2", features = ["tray-icon"] }
 serde_json = "1"
 # Разбор шестнадцатеричных строк: ключ и подпись манифеста обновлений.
