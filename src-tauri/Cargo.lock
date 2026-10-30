@@ -4029,6 +4029,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "socks"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
+dependencies = [
+ "byteorder",
+ "libc",
+ "winapi",
+]
+
+[[package]]
 name = "softbuffer"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5010,6 +5021,7 @@ dependencies = [
  "once_cell",
  "rustls",
  "rustls-pki-types",
+ "socks",
  "url",
  "webpki-roots 0.26.11",
 ]
@@ -5066,7 +5078,7 @@ dependencies = [
 [[package]]
 name = "valanium-core"
 version = "0.1.0"
-source = "git+https://github.com/ifny75/valanium_main?rev=e282729f51bbd72a0e547b0e19551a9fa962d053#e282729f51bbd72a0e547b0e19551a9fa962d053"
+source = "git+https://github.com/ifny75/valanium_main?rev=2f9e53e2827d708042db21046c2b0383bf12369e#2f9e53e2827d708042db21046c2b0383bf12369e"
 dependencies = [
  "argon2",
  "bip39",
@@ -5090,6 +5102,7 @@ dependencies = [
  "tokio",
  "tokio-socks",
  "tokio-tungstenite",
+ "ureq",
  "zeroize",
 ]
 
